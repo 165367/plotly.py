@@ -1,0 +1,59 @@
+import plotly.graph_objects as go
+import numpy as np
+
+# 模拟数据（替换为实际数据）
+years = [1950, 1980, 1990, 2000, 2010, 2023]
+population = [100000, 50000, 20000, 5000, 500, 32]
+
+# 创建断裂效果（1998年锐减点）
+broken_years = years.copy()
+broken_years.insert(3, 1998)
+broken_pop = population.copy()
+broken_pop.insert(3, 15000)  # 断裂点估值
+
+fig = go.Figure()
+
+# 主折线（带断裂）
+fig.add_trace(go.Scatter(
+    x=broken_years,
+    y=broken_pop,
+    line=dict(color='#D32F2F', width=4, dash='dash'),
+    name='野生种群',
+    marker=dict(symbol='x', size=10)
+)
+
+# 添加断裂警示
+fig.add_vrect(
+    x0=1997, x1=1999,
+    fillcolor="rgba(255,165,0,0.3)",
+    layer="below", line_width=0,
+    annotation_text="1998年砍伐高峰", 
+    annotation_position="top left"
+)
+
+# 人工种群对比
+fig.add_trace(go.Scatter(
+    x=[2020, 2023],
+    y=[200, 1200],
+    line=dict(color='#388E3C', width=4),
+    name='人工培育'
+))
+
+fig.update_layout(
+    title='海南蝴蝶树种群数量变化（1950-2023）',
+    yaxis_title='种群数量（株）',
+    hovermode="x unified",
+    annotations=[
+        dict(
+            x=2023, y=32,
+            xref="x", yref="y",
+            text="仅存32株",
+            showarrow=True,
+            arrowhead=5,
+            ax=-50, ay=-50
+        )
+    ]
+)
+
+fig.show()
+# 导出：fig.write_html("population_decline.html")
